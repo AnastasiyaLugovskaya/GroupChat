@@ -1,11 +1,14 @@
 package main;
 
+import main.dto.DtoMessage;
+import main.dto.MessageMapper;
 import main.model.Message;
 import main.model.MessageRepository;
 import main.model.User;
 import main.model.UserRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 
@@ -25,6 +30,8 @@ public class ChatController {
     private UserRepository userRepository;
     @Autowired
     private MessageRepository messageRepository;
+
+    private MessageMapper messageMapper;
 
     @GetMapping("/init")
     public HashMap<String, Boolean> init(){
@@ -56,8 +63,12 @@ public class ChatController {
         return response;
     }
     @GetMapping("/message")
-    public List<String> getMessagesList(){
-        return new ArrayList<>();
+    public List<DtoMessage> getMessagesList(){
+        return messageRepository.findAll(Sort.by(Sort.Direction.ASC, "localDateTime"))
+                .stream()
+                .map(message -> MessageMapper.map((Message) message))
+                .collect(Collectors.toList());
+
     }
     @PostMapping("/message")
     public HashMap<String, Boolean> sendMessage (@RequestParam String message){

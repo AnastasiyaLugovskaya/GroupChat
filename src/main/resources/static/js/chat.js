@@ -11,15 +11,15 @@ $(function(){
         return item;
     }
     let updateMessages = function(){
-        $('.message-list').html('<i>There are no messages</i>');
+        $('.messages-list').html('<i>There are no messages</i>');
         $.get('/message', {}, function(response){
             if(response.length == 0){
                 return;
             }
-            $('.message-list').html('');
+            $('.messages-list').html('');
             for(i in response){
                 let element = getMessageElement(response[i]);
-                $('.message-list').append(element);
+                $('.messages-list').append(element);
             }
         });
     }
@@ -36,7 +36,7 @@ $(function(){
                 }
             });
         });
-        setInterval(updateMessages, 1000);
+        setInterval(updateMessages, 3000);
     }
     let registerUser = function(name){
         $.post('/auth', {name : name}, function(response){
